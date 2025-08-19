@@ -20,3 +20,4 @@ body { margin:0; font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Ro
 .success { color:#065f46; font-size:14px; }
 .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; }
 .modal { background:#fff; border-radius:16px; width:min(520px,95%); padding:20px; }
+.card:hover { box-shadow:0 12px 36px rgba(0,0,0,.08); transition: box-shadow .2s ease; }

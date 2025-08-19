@@ -1,0 +1,4 @@
+.nav { display:flex; gap:12px; justify-content:center; margin-bottom:24px; align-items:center; }
+.nav a { text-decoration:none; color:var(--primary,#3b82f6); font-weight:600; }
+.btn { background:var(--primary,#3b82f6); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+.btn.outline { background:#eef2ff; color:#1e40af; border: 2px solid transparent; }

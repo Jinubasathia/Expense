@@ -19,21 +19,36 @@ public class ExpenseService {
     }
 
     public Expense createExpense(Expense expense) {
-        expense.setStatus("PENDING");
+        expense.setStatus("PENDING"); // Default status
         return expenseRepository.save(expense);
     }
 
     public Expense updateExpense(Long id, Expense expenseDetails) {
-        expenseDetails.setId(id);
-        return expenseRepository.save(expenseDetails);
+        Optional<Expense> optionalExpense = expenseRepository.findById(id);
+        if (optionalExpense.isEmpty()) {
+            throw new RuntimeException("Expense with ID " + id + " not found");
+        }
+
+        Expense expense = optionalExpense.get();
+        expense.setEmployeeId(expenseDetails.getEmployeeId());
+        expense.setAmount(expenseDetails.getAmount());
+        expense.setDescription(expenseDetails.getDescription());
+        expense.setDate(expenseDetails.getDate());
+        expense.setRemarks(expenseDetails.getRemarks());
+
+        return expenseRepository.save(expense);
     }
 
     public void deleteExpense(Long id) {
+        if (!expenseRepository.existsById(id)) {
+            throw new RuntimeException("Expense with ID " + id + " not found");
+        }
         expenseRepository.deleteById(id);
     }
 
     public Expense getExpenseById(Long id) {
-        return expenseRepository.findById(id).orElse(null);
+        return expenseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expense with ID " + id + " not found"));
     }
 
     public Expense updateExpenseStatus(Long id, String status, String remarks) {

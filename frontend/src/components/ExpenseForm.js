@@ -1,14 +1,24 @@
+// src/components/ExpenseForm.js
 import React from "react";
 import api from "../utils/api";
 import "./ExpenseForm.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function ExpenseForm() {
+  const { user } = useAuth();
   const [form, setForm] = React.useState({ employeeId: "", amount: "", description: "", date: "" });
   const [errors, setErrors] = React.useState({});
   const [message, setMessage] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
+
+  // If user is employee, auto-fill their id and lock the field
+  React.useEffect(() => {
+    if (user?.role === "EMPLOYEE" && user?.id) {
+      setForm((f) => ({ ...f, employeeId: String(user.id) }));
+    }
+  }, [user]);
 
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -35,8 +45,8 @@ export default function ExpenseForm() {
         date: form.date,
       });
       setMessage("Expense submitted successfully");
-      setForm({ employeeId: "", amount: "", description: "", date: "" });
-      setTimeout(() => navigate("/expenses"), 500);
+      setForm({ employeeId: user?.id || "", amount: "", description: "", date: "" });
+      setTimeout(() => navigate("/expenses/my"), 500);
     } catch (err) {
       setMessage(err?.response?.data?.message || "Submission failed");
     } finally { setLoading(false); }
@@ -48,7 +58,10 @@ export default function ExpenseForm() {
       <form className="form" onSubmit={onSubmit} aria-label="expense-form">
         <div>
           <label className="label">Employee ID</label>
-          <input className="input" name="employeeId" type="number" value={form.employeeId} onChange={onChange} />
+          <input
+            className="input" name="employeeId" type="number"
+            value={form.employeeId} onChange={onChange}
+            disabled={user?.role === "EMPLOYEE"} />
           {errors.employeeId && <div className="error">{errors.employeeId}</div>}
         </div>
         <div>

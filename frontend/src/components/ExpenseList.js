@@ -1,35 +1,40 @@
+// src/components/ExpenseList.js
 import React from "react";
 import api from "../utils/api";
 import ExpenseStatusUpdate from "./ExpenseStatusUpdate";
 import "./ExpenseList.css";
+import { useAuth } from "../context/AuthContext.jsx";
 
-export default function ExpenseList() {
+export default function ExpenseList({ scope = "ALL" }) {
   const [items, setItems] = React.useState([]);
   const [status, setStatus] = React.useState("ALL");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
+  const { user } = useAuth();
 
   const load = React.useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await api.get("/expenses");
+      const endpoint = scope === "MINE" ? "/expenses/me" : "/expenses";
+      const { data } = await api.get(endpoint);
       setItems(data);
     } catch (e) {
       setError("Failed to load expenses");
     } finally { setLoading(false); }
-  }, []);
+  }, [scope]);
 
   React.useEffect(() => { load(); }, [load]);
 
   const filtered = items.filter((e) => status === "ALL" || e.status === status);
-
   const fmtAmount = (n) => `₹${Number(n).toFixed(2)}`;
-  const fmtDate = (d) =>
-    new Date(d).toLocaleDateString(undefined, { month: "short", day: "2-digit", year: "numeric" });
+  const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { month: "short", day: "2-digit", year: "numeric" });
+
+  const showActions = scope !== "MINE" && (user?.role === "MANAGER" || user?.role === "ADMIN");
 
   return (
     <div className="card">
-      <h2>All Expenses</h2>
+      <h2>{scope === "MINE" ? "My Expenses" : "All Expenses"}</h2>
+
       <div className="controls">
         <label>Status:</label>
         <select className="select" aria-label="status-filter" value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -56,7 +61,7 @@ export default function ExpenseList() {
               <th>Date</th>
               <th>Status</th>
               <th>Remarks</th>
-              <th>Actions</th>
+              {showActions && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -68,7 +73,9 @@ export default function ExpenseList() {
                 <td>{fmtDate(e.date)}</td>
                 <td><span className={`badge ${e.status.toLowerCase()}`}>{e.status}</span></td>
                 <td>{e.remarks || "-"}</td>
-                <td><ExpenseStatusUpdate expense={e} onUpdated={load} /></td>
+                {showActions && (
+                  <td><ExpenseStatusUpdate expense={e} onUpdated={load} /></td>
+                )}
               </tr>
             ))}
           </tbody>

@@ -1,55 +1,64 @@
 import React from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import AuthProvider, { useAuth } from "./context/AuthContext.jsx";
-import { registerTokenGetter } from "./utils/api";
+import { Routes, Route } from "react-router-dom";
+import AuthProvider from "./context/AuthContext.jsx";
+import Header from "./components/Header";
+
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import RoleGuard from "./components/auth/RoleGuard.jsx";
+
+import LoginPage from "./components/LoginPage";
+import SignupPage from "./components/SignupPage";
+
+import EmployeeDashboard from "./components/dashboards/EmployeeDashboard";
+import AdminDashboard from "./components/dashboards/AdminDashboard";
+
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseList from "./components/ExpenseList";
-import LoginPage from "./components/LoginPage"; // ✅ new page
+
 import "./App.css";
 
-// ✅ Header uses Context for login/logout
-function Header() {
-  const { token, logout } = useAuth();
-  const navigate = useNavigate();
-
-  React.useEffect(() => {
-    registerTokenGetter(() => token);
-  }, [token]);
-
+function DashboardRouter() {
+  // We expose two nested routes guarded by role; index will match whichever guard passes
   return (
-    <div className="nav">
-      <Link to="/">Add Expenses</Link>
-      <Link to="/expenses">All Expenses</Link>
-      {token ? (
-        <button
-          className="btn outline"
-          onClick={() => {
-            logout();
-            navigate("/");
-          }}
-        >
-          Logout
-        </button>
-      ) : (
-        <Link to="/login">
-          <button className="btn outline">Login</button>
-        </Link>
-      )}
-    </div>
+    <Routes>
+      <Route element={<RoleGuard allow={["EMPLOYEE"]} />}>
+        <Route index element={<EmployeeDashboard />} />
+      </Route>
+      <Route element={<RoleGuard allow={["MANAGER","ADMIN"]} />}>
+        <Route index element={<AdminDashboard />} />
+      </Route>
+    </Routes>
   );
 }
 
-// ✅ Main App
 export default function App() {
   return (
     <AuthProvider>
       <div className="container">
         <h1 className="h1">Expense Reimbursement Portal</h1>
         <Header />
+
         <Routes>
-          <Route path="/" element={<ExpenseForm />} />
-          <Route path="/expenses" element={<ExpenseList />} />
-          <Route path="/login" element={<LoginPage />} /> {/* ✅ new route */}
+          {/* Public */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+
+          {/* Protected area */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard/*" element={<DashboardRouter />} />
+
+            {/* Employee */}
+            <Route path="/expenses/new" element={<ExpenseForm />} />
+            <Route path="/expenses/my" element={<ExpenseList scope="MINE" />} />
+
+            {/* Admin/Manager */}
+            <Route element={<RoleGuard allow={["MANAGER","ADMIN"]} />}>
+              <Route path="/admin/expenses" element={<ExpenseList scope="ALL" />} />
+            </Route>
+          </Route>
+
+          {/* Default → login */}
+          <Route path="*" element={<LoginPage />} />
         </Routes>
       </div>
     </AuthProvider>
