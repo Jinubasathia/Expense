@@ -1,2 +1,10 @@
-.form { display:grid; gap:12px; }
-.label { font-weight:600; }
+/* src/components/ExpenseForm.css */
+.form-container { max-width:500px; margin:30px auto; padding:30px; background:#fff; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.1); }
+.form-container h2 { text-align:center; color:#1e40af; margin-bottom:20px; }
+form { display:flex; flex-direction:column; gap:16px; }
+label { font-weight:600; color:#374151; }
+input, select { padding:10px 14px; border-radius:12px; border:1px solid #d1d5db; outline:none; transition:0.2s; }
+input:focus, select:focus { border-color:#3b82f6; box-shadow:0 0 4px rgba(59,130,246,0.3); }
+.error { color:#ef4444; font-weight:600; }
+.btn { padding:12px; background:#3b82f6; color:#fff; border:none; border-radius:12px; cursor:pointer; transition:0.2s; font-weight:600; }
+.btn:hover { background:#2563eb; }

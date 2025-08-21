@@ -1,86 +1,148 @@
 // src/components/ExpenseList.js
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import api from "../utils/api";
-import ExpenseStatusUpdate from "./ExpenseStatusUpdate";
 import "./ExpenseList.css";
-import { useAuth } from "../context/AuthContext.jsx";
+import "./dashboards/Dashboard.css";
+import ExpenseStatusUpdate from "./ExpenseStatusUpdate";
+import { useAuth } from "../context/AuthContext";
 
-export default function ExpenseList({ scope = "ALL" }) {
-  const [items, setItems] = React.useState([]);
-  const [status, setStatus] = React.useState("ALL");
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState("");
+export default function ExpenseList({ reviewer = false, title }) {
   const { user } = useAuth();
+  const [expenses, setExpenses] = useState([]);
+  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterCategory, setFilterCategory] = useState("ALL");
+  const [filterEmployeeId, setFilterEmployeeId] = useState("");
 
-  const load = React.useCallback(async () => {
+  const isReviewer = reviewer || ["ADMIN","MANAGER","FINANCE"].includes(user?.role);
+
+  const loadExpenses = async () => {
     try {
-      setLoading(true);
-      const endpoint = scope === "MINE" ? "/expenses/me" : "/expenses";
-      const { data } = await api.get(endpoint);
-      setItems(data);
+      if (isReviewer) {
+        const { data } = await api.get("/expenses");
+        setExpenses(data);
+      } else {
+        // employee: get own expenses by user.id
+        const { data } = await api.get(`/expenses/employee/${user.id}`);
+        setExpenses(data);
+      }
     } catch (e) {
-      setError("Failed to load expenses");
-    } finally { setLoading(false); }
-  }, [scope]);
+      console.error(e);
+    }
+  };
 
-  React.useEffect(() => { load(); }, [load]);
+  useEffect(() => { loadExpenses(); }, []);
 
-  const filtered = items.filter((e) => status === "ALL" || e.status === status);
-  const fmtAmount = (n) => `₹${Number(n).toFixed(2)}`;
-  const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { month: "short", day: "2-digit", year: "numeric" });
+  const filteredExpenses = useMemo(() => {
+    return expenses.filter(e => {
+      const statusOk = filterStatus === "ALL" ? true : e.status === filterStatus;
+      const catOk = filterCategory === "ALL" ? true : (e.category === filterCategory);
+      const empOk = !isReviewer || !filterEmployeeId ? true : String(e.employeeId) === String(filterEmployeeId);
+      return statusOk && catOk && empOk;
+    });
+  }, [expenses, filterStatus, filterCategory, filterEmployeeId, isReviewer]);
 
-  const showActions = scope !== "MINE" && (user?.role === "MANAGER" || user?.role === "ADMIN");
+  const exportCsv = async () => {
+    const scope = isReviewer ? "all" : "mine";
+    const url = isReviewer
+      ? `/expenses/export?scope=${scope}`
+      : `/expenses/export?scope=${scope}&employeeId=${user.id}`;
+    const res = await api.get(url, { responseType: "blob" });
+    const blob = new Blob([res.data], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = isReviewer ? "all-expenses.csv" : "my-expenses.csv";
+    link.click();
+    window.URL.revokeObjectURL(link.href);
+  };
 
   return (
-    <div className="card">
-      <h2>{scope === "MINE" ? "My Expenses" : "All Expenses"}</h2>
+    <div className="expense-list">
+      <h2 style={{ textAlign:"left" }}>{title || (isReviewer ? "All Expenses" : "My Expenses")}</h2>
 
-      <div className="controls">
-        <label>Status:</label>
-        <select className="select" aria-label="status-filter" value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="ALL">All</option>
-          <option value="PENDING">Pending</option>
-          <option value="APPROVED">Approved</option>
-          <option value="REJECTED">Rejected</option>
-        </select>
-        <button className="btn outline" onClick={load}>Refresh</button>
+      <div className="filters">
+        <label>
+          Status:{" "}
+          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+            <option value="ALL">All</option>
+            <option value="PENDING">Pending</option>
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </label>
+        <label>
+          Category:{" "}
+          <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}>
+            <option value="ALL">All</option>
+            <option>Travel</option>
+            <option>Food</option>
+            <option>Office Supplies</option>
+            <option>Internet</option>
+            <option>Accommodation</option>
+            <option>Other</option>
+          </select>
+        </label>
+        {isReviewer && (
+          <label>
+            Employee ID:{" "}
+            <input
+              type="text"
+              value={filterEmployeeId}
+              onChange={e => setFilterEmployeeId(e.target.value)}
+              placeholder="e.g. 101"
+              style={{ padding:"8px 10px", borderRadius:8, border:"1px solid #d1d5db" }}
+            />
+          </label>
+        )}
+        <button className="btn" onClick={exportCsv} style={{ marginLeft:"auto" }}>
+          Export CSV
+        </button>
       </div>
 
-      {loading && <div>Loading…</div>}
-      {error && <div className="error">{error}</div>}
-
-      {filtered.length === 0 && !loading ? (
-        <div>No expenses found</div>
-      ) : (
-        <table className="table" aria-label="expenses-table">
-          <thead>
-            <tr>
-              <th>Employee ID</th>
-              <th>Amount</th>
-              <th>Description</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Remarks</th>
-              {showActions && <th>Actions</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((e) => (
+      <table className="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Employee ID</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Remarks</th>
+            {isReviewer && <th>Actions</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {filteredExpenses.length > 0 ? (
+            filteredExpenses.map((e) => (
               <tr key={e.id}>
+                <td>{e.id}</td>
                 <td>{e.employeeId}</td>
-                <td>{fmtAmount(e.amount)}</td>
+                <td>₹{Number(e.amount).toFixed(2)}</td>
                 <td>{e.description}</td>
-                <td>{fmtDate(e.date)}</td>
+                <td>{new Date(e.date).toLocaleDateString()}</td>
+                <td>{e.category}</td>
                 <td><span className={`badge ${e.status.toLowerCase()}`}>{e.status}</span></td>
                 <td>{e.remarks || "-"}</td>
-                {showActions && (
-                  <td><ExpenseStatusUpdate expense={e} onUpdated={load} /></td>
+                {isReviewer && (
+                  <td>
+                    <ExpenseStatusUpdate
+                      expense={e}
+                      onUpdated={loadExpenses}
+                    />
+                  </td>
                 )}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            ))
+          ) : (
+            <tr>
+              <td colSpan={isReviewer ? 9 : 8} style={{ textAlign: "center" }}>
+                No expenses found
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

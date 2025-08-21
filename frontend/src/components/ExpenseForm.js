@@ -1,86 +1,67 @@
 // src/components/ExpenseForm.js
-import React from "react";
+import React, { useState } from "react";
 import api from "../utils/api";
 import "./ExpenseForm.css";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/AuthContext";
 
 export default function ExpenseForm() {
   const { user } = useAuth();
-  const [form, setForm] = React.useState({ employeeId: "", amount: "", description: "", date: "" });
-  const [errors, setErrors] = React.useState({});
-  const [message, setMessage] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const navigate = useNavigate();
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [category, setCategory] = useState("Travel");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  // If user is employee, auto-fill their id and lock the field
-  React.useEffect(() => {
-    if (user?.role === "EMPLOYEE" && user?.id) {
-      setForm((f) => ({ ...f, employeeId: String(user.id) }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccess("");
+    if (!amount || !description || !date || !category) {
+      setError("All fields are required!");
+      return;
     }
-  }, [user]);
-
-  const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-
-  const validate = () => {
-    const e = {};
-    if (!form.employeeId) e.employeeId = "Employee ID is required";
-    if (!form.amount || Number(form.amount) <= 0) e.amount = "Amount must be greater than 0";
-    if (!form.description || form.description.trim().length < 5) e.description = "Description must be at least 5 characters";
-    if (!form.date) e.date = "Date is required";
-    return e;
-  };
-
-  const onSubmit = async (ev) => {
-    ev.preventDefault();
-    const e = validate();
-    setErrors(e);
-    if (Object.keys(e).length) return;
     try {
-      setLoading(true);
       await api.post("/expenses", {
-        employeeId: Number(form.employeeId),
-        amount: Number(form.amount),
-        description: form.description.trim(),
-        date: form.date,
+        employeeId: Number(user?.id), // auto from logged-in user
+        amount: Number(amount),
+        description,
+        date,
+        category
       });
-      setMessage("Expense submitted successfully");
-      setForm({ employeeId: user?.id || "", amount: "", description: "", date: "" });
-      setTimeout(() => navigate("/expenses/my"), 500);
+      setAmount(""); setDescription(""); setDate(""); setCategory("Travel");
+      setError(""); setSuccess("Expense submitted successfully.");
     } catch (err) {
-      setMessage(err?.response?.data?.message || "Submission failed");
-    } finally { setLoading(false); }
+      setError(err.response?.data?.message || "Failed to add expense");
+    }
   };
 
   return (
-    <div className="card">
-      <h2>Submit Expense Claim</h2>
-      <form className="form" onSubmit={onSubmit} aria-label="expense-form">
-        <div>
-          <label className="label">Employee ID</label>
-          <input
-            className="input" name="employeeId" type="number"
-            value={form.employeeId} onChange={onChange}
-            disabled={user?.role === "EMPLOYEE"} />
-          {errors.employeeId && <div className="error">{errors.employeeId}</div>}
-        </div>
-        <div>
-          <label className="label">Amount</label>
-          <input className="input" name="amount" type="number" value={form.amount} onChange={onChange} />
-          {errors.amount && <div className="error">{errors.amount}</div>}
-        </div>
-        <div>
-          <label className="label">Description</label>
-          <textarea className="textarea" name="description" value={form.description} onChange={onChange} />
-          {errors.description && <div className="error">{errors.description}</div>}
-        </div>
-        <div>
-          <label className="label">Date</label>
-          <input className="input" name="date" type="date" value={form.date} onChange={onChange} />
-          {errors.date && <div className="error">{errors.date}</div>}
-        </div>
-        <button className="btn" type="submit" disabled={loading}>{loading ? "Submitting…" : "Submit"}</button>
-        {message && <div className={message.includes("success") ? "success" : "error"}>{message}</div>}
+    <div className="form-container">
+      <h2>New Expense</h2>
+      <form onSubmit={handleSubmit}>
+        {error && <p className="error">{error}</p>}
+        {success && <p style={{color:"#16a34a", fontWeight:700}}>{success}</p>}
+
+        <label>Amount</label>
+        <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" />
+
+        <label>Description</label>
+        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Enter description" />
+
+        <label>Date</label>
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+
+        <label>Category</label>
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <option>Travel</option>
+          <option>Food</option>
+          <option>Office Supplies</option>
+          <option>Internet</option>
+          <option>Accommodation</option>
+          <option>Other</option>
+        </select>
+
+        <button type="submit" className="btn">Submit</button>
       </form>
     </div>
   );

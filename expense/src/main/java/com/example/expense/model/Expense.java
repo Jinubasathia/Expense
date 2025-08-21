@@ -1,3 +1,4 @@
+// src/main/java/com/example/expense/model/Expense.java
 package com.example.expense.model;
 
 import jakarta.persistence.*;
@@ -26,19 +27,35 @@ public class Expense {
     @PastOrPresent(message = "Date must not be in the future")
     private LocalDate date;
 
+    @NotBlank(message = "Category is required")
+    private String category; // NEW
+
     @Pattern(regexp = "^(APPROVED|REJECTED|PENDING)$", message = "Status must be either APPROVED, REJECTED or PENDING")
     private String status;
 
     private String remarks;
 
+    private Boolean paid = false; // default false
+
+
+    public Boolean getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
+    }
+
     public Expense() {}
 
-    public Expense(Long id, Long employeeId, Double amount, String description, LocalDate date, String status, String remarks) {
+    public Expense(Long id, Long employeeId, Double amount, String description, LocalDate date,
+                   String category, String status, String remarks) {
         this.id = id;
         this.employeeId = employeeId;
         this.amount = amount;
         this.description = description;
         this.date = date;
+        this.category = category;
         this.status = status;
         this.remarks = remarks;
     }
@@ -58,6 +75,9 @@ public class Expense {
 
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

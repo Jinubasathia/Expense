@@ -1,49 +1,69 @@
+// src/components/SignupPage.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../utils/api";
-import "./LoginPage.css";
+import "./AuthPage.css";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState(""); 
+  const [password, setPassword] = useState(""); 
   const [role, setRole] = useState("EMPLOYEE");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [ok, setOk] = useState("");
+  const [error, setError] = useState(""); 
   const navigate = useNavigate();
 
-  const submit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password) return setError("All fields are required.");
-    setError(""); setOk("");
+
+    if (!name || !email || !password || !role) {
+      setError("All fields are required.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
     try {
-      await api.post("/users/signup", { name, email, password, role });
-      setOk("Account created. Please login.");
-      setTimeout(() => navigate("/login"), 800);
+      const res = await fetch("http://localhost:8080/api/users/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role: role.toUpperCase() })
+      });
+
+      const data = await res.json();
+      if (res.ok) navigate("/login");
+      else setError(data.message);
     } catch (err) {
-      setError(err?.response?.data?.message || "Signup failed");
+      setError("Signup failed");
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
+    <div className="auth-page">
+      <div className="auth-box slide-in-left">
         <h2>Sign Up</h2>
-        <form onSubmit={submit}>
-          <input placeholder="Full Name" value={name} onChange={(e)=>setName(e.target.value)} />
-          <input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} />
-          <input type="password" placeholder="Password (min 6)" value={password} onChange={(e)=>setPassword(e.target.value)} />
-          <select value={role} onChange={(e)=>setRole(e.target.value)}>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <label>Name</label>
+          <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Enter your name" className="input-box" />
+          <label>Email</label>
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter email" className="input-box" />
+          <label>Password</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" className="input-box" />
+          <label>Role</label>
+          <select value={role} onChange={e => setRole(e.target.value)} className="input-box">
             <option value="EMPLOYEE">Employee</option>
             <option value="MANAGER">Manager</option>
-            {/* Create ADMIN accounts manually if you prefer */}
+            <option value="FINANCE">Finance</option>
+            <option value="ADMIN">Admin</option>
           </select>
-          {error && <div className="error">{error}</div>}
-          {ok && <div className="success">{ok}</div>}
-          <button type="submit">Create Account</button>
+          <button type="submit" className="btn">Sign Up</button>
         </form>
-        <div className="muted">Already have an account? <Link to="/login">Login</Link></div>
+        <p className="switch">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
       </div>
+      <div className="auth-image signup-image"></div>
     </div>
   );
 }

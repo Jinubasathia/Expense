@@ -1,0 +1,165 @@
+/* Split screen layout */
+.auth-page {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 0 200px;   /* space on left + right edges */
+  box-sizing: border-box;
+
+  /* Animated Bright Gradient Background */
+  background: linear-gradient(-45deg, 
+    #ff6b6b,   /* bright red */
+    #feca57,   /* golden yellow */
+    #48dbfb,   /* sky blue */
+    #1dd1a1,   /* teal green */
+    #ff9ff3,   /* pink */
+    #54a0ff,   /* vivid blue */
+    #5f27cd,   /* deep purple */
+    #f368e0    /* neon magenta */
+  );
+  background-size: 600% 600%;
+  animation: gradientBG 15s ease infinite;
+}
+
+/* Background animation */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Form side */
+.auth-box {
+  flex: 0.6;                     
+  max-width: 380px;              
+  margin: auto;                  
+  background: rgba(255, 255, 255, 0.9); /* semi-transparent glass */
+  padding: 40px 32px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  animation: fadeIn 0.9s ease-in-out;
+  backdrop-filter: blur(6px);
+}
+
+/* Login: push slightly away from the image */
+.login-page .auth-box {
+  margin-right: 60px;
+}
+
+/* Signup: push slightly away from the image */
+.signup-page .auth-box {
+  margin-left: 60px;
+}
+
+.auth-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #0f172a; /* dark navy for contrast */
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.input-box,
+select {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.input-box:focus,
+select:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+  outline: none;
+}
+
+.btn {
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(45deg, #ff6b6b, #feca57, #54a0ff);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.btn:hover {
+  background: linear-gradient(45deg, #1dd1a1, #5f27cd, #f368e0);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.error {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Switch link */
+.switch {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.switch a {
+  color: #ff6b6b;
+  font-weight: 600;
+  text-decoration: none;
+}
+.switch a:hover {
+  text-decoration: underline;
+}
+
+/* Image side */
+.auth-image {
+  flex: 1.4;                     
+  background-size: cover;
+  background-position: center;
+  transition: transform 1.5s ease-in-out;
+}
+.auth-image:hover {
+  transform: scale(1.05);
+}
+
+/* Different images for login/signup */
+.login-image {
+  background-image: url("c:/Users/jinub/Downloads/family-budget-concept-couple-personal-600nw-2382116923-removebg-preview.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.signup-image {
+  background-image: url("c:/Users/jinub/Downloads/vector-illustration-virtual-business-assistant-600nw-1040049118-removebg-preview.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide-in-right {
+  animation: slideInRight 0.9s ease;
+}
+.slide-in-left {
+  animation: slideInLeft 0.9s ease;
+}
+@keyframes slideInRight {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}

@@ -1,4 +1,7 @@
-.nav { display:flex; gap:12px; justify-content:center; margin-bottom:24px; align-items:center; }
-.nav a { text-decoration:none; color:var(--primary,#3b82f6); font-weight:600; }
-.btn { background:var(--primary,#3b82f6); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
-.btn.outline { background:#eef2ff; color:#1e40af; border: 2px solid transparent; }
+.nav-bar { display:flex; justify-content:space-between; align-items:center; padding:16px 32px; background:#0f172a; color:#fff; border-radius:12px; margin-bottom:24px; }
+.logo { font-weight:700; font-size:22px; color:#3b82f6; text-decoration:none; }
+.nav-links { display:flex; gap:12px; align-items:center; }
+.nav-btn { padding:8px 14px; border-radius:8px; background:#3b82f6; color:#fff; border:none; cursor:pointer; transition:0.2s; }
+.nav-btn:hover { background:#2563eb; }
+.nav-btn.outline { background:#fff; color:#3b82f6; border:2px solid #3b82f6; }
+.nav-btn.outline:hover { background:#e0f2fe; }

@@ -9,32 +9,52 @@ export default function Header() {
   const navigate = useNavigate();
 
   return (
-    <div className="nav">
-      <Link to="/dashboard">Dashboard</Link>
+    <nav className="nav-bar">
+      <Link className="logo" to={user ? "/dashboard" : "/login"}>Expense Portal</Link>
 
-      {user?.role === "EMPLOYEE" && (
-        <>
-          <Link to="/expenses/new">Add Expense</Link>
-          <Link to="/expenses/my">My Expenses</Link>
-        </>
-      )}
+      <div className="nav-links">
+        {user?.role === "EMPLOYEE" && (
+          <>
+            <Link to="/expenses/new" className="nav-btn">Add Expense</Link>
+            <Link to="/expenses/my" className="nav-btn outline">My Expenses</Link>
+          </>
+        )}
 
-      {(user?.role === "MANAGER" || user?.role === "ADMIN") && (
-        <>
-          <Link to="/admin/expenses">All Expenses</Link>
-        </>
-      )}
+        {user?.role === "MANAGER" && (
+          <>
+            <Link to="/manager/dashboard" className="nav-btn">Manager Home</Link>
+            <Link to="/manager/expenses" className="nav-btn outline">All Expenses</Link>
+          </>
+        )}
 
-      {token ? (
-        <button className="btn outline" onClick={() => { logout(); navigate("/login"); }}>
-          Logout
-        </button>
-      ) : (
-        <>
-          <Link to="/login"><button className="btn outline">Login</button></Link>
-          <Link to="/signup"><button className="btn outline">Sign Up</button></Link>
-        </>
-      )}
-    </div>
+        {user?.role === "FINANCE" && (
+          <>
+            <Link to="/finance/dashboard" className="nav-btn">Finance Home</Link>
+            <Link to="/finance/expenses" className="nav-btn outline">All Expenses</Link>
+          </>
+        )}
+
+        {user?.role === "ADMIN" && (
+          <>
+            <Link to="/admin/dashboard" className="nav-btn">Admin Home</Link>
+            <Link to="/admin/expenses" className="nav-btn outline">All Expenses</Link>
+          </>
+        )}
+
+        {token ? (
+          <button
+            className="nav-btn outline"
+            onClick={() => { logout(); navigate("/login"); }}
+          >
+            Logout
+          </button>
+        ) : (
+          <>
+            <Link to="/login" className="nav-btn outline">Login</Link>
+            <Link to="/signup" className="nav-btn outline">Sign Up</Link>
+          </>
+        )}
+      </div>
+    </nav>
   );
 }

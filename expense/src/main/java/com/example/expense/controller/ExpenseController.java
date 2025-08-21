@@ -1,15 +1,16 @@
+// src/main/java/com/example/expense/controller/ExpenseController.java
 package com.example.expense.controller;
 
 import com.example.expense.model.Expense;
 import com.example.expense.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -23,6 +24,12 @@ public class ExpenseController {
     @GetMapping
     public ResponseEntity<List<Expense>> getAllExpenses() {
         return ResponseEntity.ok(expenseService.getAllExpenses());
+    }
+
+    // NEW: Get expenses for a specific employee
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<Expense>> getByEmployee(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(expenseService.getExpensesByEmployee(employeeId));
     }
 
     @PostMapping
@@ -56,6 +63,25 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.getExpenseById(id));
     }
 
+    // NEW: CSV export (scope=all | mine; employeeId required for mine)
+    @GetMapping(value = "/export", produces = "text/csv")
+    public ResponseEntity<byte[]> exportCsv(@RequestParam String scope,
+                                            @RequestParam(required = false) Long employeeId) {
+        String csv;
+        if ("all".equalsIgnoreCase(scope)) {
+            csv = expenseService.exportCsvAll();
+        } else if ("mine".equalsIgnoreCase(scope) && employeeId != null) {
+            csv = expenseService.exportCsvForEmployee(employeeId);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+        byte[] data = csv.getBytes(StandardCharsets.UTF_8);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=expenses.csv");
+        headers.set(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8");
+        return new ResponseEntity<>(data, headers, HttpStatus.OK);
+    }
+
     // Validation error handler
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
@@ -69,7 +95,6 @@ public class ExpenseController {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    // Handle Illegal Arguments
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -78,7 +103,6 @@ public class ExpenseController {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    // Handle Runtime exceptions (like Not Found)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
         Map<String, String> errorResponse = new HashMap<>();

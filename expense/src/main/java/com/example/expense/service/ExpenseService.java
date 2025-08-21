@@ -1,3 +1,4 @@
+// src/main/java/com/example/expense/service/ExpenseService.java
 package com.example.expense.service;
 
 import com.example.expense.model.Expense;
@@ -5,8 +6,10 @@ import com.example.expense.repository.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpenseService {
@@ -16,6 +19,10 @@ public class ExpenseService {
 
     public List<Expense> getAllExpenses() {
         return expenseRepository.findAll();
+    }
+
+    public List<Expense> getExpensesByEmployee(Long employeeId) {
+        return expenseRepository.findByEmployeeId(employeeId);
     }
 
     public Expense createExpense(Expense expense) {
@@ -34,6 +41,7 @@ public class ExpenseService {
         expense.setAmount(expenseDetails.getAmount());
         expense.setDescription(expenseDetails.getDescription());
         expense.setDate(expenseDetails.getDate());
+        expense.setCategory(expenseDetails.getCategory());
         expense.setRemarks(expenseDetails.getRemarks());
 
         return expenseRepository.save(expense);
@@ -71,5 +79,40 @@ public class ExpenseService {
         expense.setRemarks(remarks);
 
         return expenseRepository.save(expense);
+    }
+
+    /** Simple CSV export for reporting */
+    public String exportCsvAll() {
+        List<Expense> list = expenseRepository.findAll();
+        return toCsv(list);
+    }
+
+    public String exportCsvForEmployee(Long employeeId) {
+        List<Expense> list = expenseRepository.findByEmployeeId(employeeId);
+        return toCsv(list);
+    }
+
+    private String toCsv(List<Expense> list) {
+        DateTimeFormatter fmt = DateTimeFormatter.ISO_DATE;
+        String header = "ID,EmployeeID,Amount,Description,Date,Category,Status,Remarks";
+        String rows = list.stream().map(e -> String.join(",",
+                safe(e.getId()), safe(e.getEmployeeId()),
+                safe(e.getAmount()), csvEscape(e.getDescription()),
+                e.getDate() != null ? e.getDate().format(fmt) : "",
+                csvEscape(e.getCategory()),
+                csvEscape(e.getStatus()),
+                csvEscape(e.getRemarks())
+        )).collect(Collectors.joining("\n"));
+        return header + "\n" + rows;
+    }
+
+    private String safe(Object o) { return o == null ? "" : o.toString(); }
+    private String csvEscape(String s) {
+        if (s == null) return "";
+        String out = s.replace("\"", "\"\"");
+        if (out.contains(",") || out.contains("\"") || out.contains("\n")) {
+            return "\"" + out + "\"";
+        }
+        return out;
     }
 }

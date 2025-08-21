@@ -1,3 +1,4 @@
+// src/main/java/com/example/expense/model/User.java
 package com.example.expense.model;
 
 import jakarta.persistence.*;
@@ -22,12 +23,13 @@ public class User {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
-    @NotBlank(message = "Role is required")
-    private String role;  // "Employee" or "Manager"
+    @NotNull(message = "Role is required")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public User() {}
 
-    public User(String name, String email, String password, String role) {
+    public User(String name, String email, String password, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -47,6 +49,13 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public enum Role {
+        EMPLOYEE,
+        MANAGER,
+        FINANCE, // NEW
+        ADMIN
+    }
 }

@@ -1,1 +1,5 @@
-.controls { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+/* src/components/ExpenseList.css */
+.expense-list { margin:30px auto; max-width:1100px; background:#fff; padding:24px; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.1); }
+.expense-list h2 { text-align:center; color:#1e40af; margin-bottom:20px; }
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { padding:12px; text-align:left; border-bottom:1px solid #e5e7eb; }

@@ -1,47 +1,80 @@
-// src/components/LoginPage.jsx
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
-import api from "../utils/api";
-import "./LoginPage.css";
+import "./AuthPage.css";
 
 export default function LoginPage() {
-  const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(""); 
+  const [password, setPassword] = useState(""); 
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const submit = async (e) => {
-    e.preventDefault();
-    if (!email.trim() || !password.trim()) return setError("Both fields are required.");
-    setError("");
-    setLoading(true);
-
+  const handleSubmit = async (e) => { 
+    e.preventDefault(); 
+    setError(""); 
     try {
-      const { data } = await api.post("/users/login", { email: email.trim(), password: password.trim() });
-      // backend must return { token, user }
-      login(data);
-      navigate("/dashboard");
+      const res = await fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) { 
+        login(data);
+        const role = data.user.role.toUpperCase();
+        switch (role) {
+          case "ADMIN":
+            navigate("/admin/dashboard");
+            break;
+          case "MANAGER":
+            navigate("/manager/dashboard");
+            break;
+          case "FINANCE":
+            navigate("/finance/dashboard");
+            break;
+          default:
+            navigate("/dashboard"); // Employee
+        }
+      } else {
+        setError(data.message || "Invalid credentials");
+      }
     } catch (err) {
-      setError(err?.response?.data?.message || "Invalid credentials");
-    } finally {
-      setLoading(false);
+      setError("Login failed. Please try again.");
+      console.error(err);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
+    <div className="auth-page">
+      <div className="auth-image login-image"></div>
+      <div className="auth-box slide-in-right">
         <h2>Login</h2>
-        <form onSubmit={submit}>
-          <input type="email" placeholder="Enter Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          {error && <div className="error">{error}</div>}
-          <button type="submit" disabled={loading}>{loading ? "Signing in…" : "Login"}</button>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <label>Email</label>
+          <input 
+            type="email" 
+            value={email} 
+            onChange={e => setEmail(e.target.value)} 
+            placeholder="Enter email" 
+            className="input-box"
+          />
+          <label>Password</label>
+          <input 
+            type="password" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            placeholder="Enter password" 
+            className="input-box"
+          />
+          <button type="submit" className="btn">Login</button>
         </form>
-        <div className="muted">No account? <Link to="/signup">Create one</Link></div>
+        <p className="switch">
+          Don't have an account? <Link to="/signup">Sign Up</Link>
+        </p>
       </div>
     </div>
   );
