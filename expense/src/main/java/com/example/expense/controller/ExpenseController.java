@@ -26,7 +26,7 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.getAllExpenses());
     }
 
-    // NEW: Get expenses for a specific employee
+    //  Get expenses for a specific employee
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<List<Expense>> getByEmployee(@PathVariable Long employeeId) {
         return ResponseEntity.ok(expenseService.getExpensesByEmployee(employeeId));

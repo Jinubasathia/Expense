@@ -81,7 +81,6 @@ public class ExpenseService {
         return expenseRepository.save(expense);
     }
 
-    /** Simple CSV export for reporting */
     public String exportCsvAll() {
         List<Expense> list = expenseRepository.findAll();
         return toCsv(list);

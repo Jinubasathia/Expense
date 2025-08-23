@@ -1,4 +1,3 @@
-// src/components/dashboards/ProcessPayments.jsx
 import React, { useEffect, useState } from "react";
 import api from "../../utils/api";
 import "./Dashboard.css";

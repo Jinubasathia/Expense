@@ -1,4 +1,3 @@
-/* src/components/ExpenseForm.css */
 .form-container { max-width:500px; margin:30px auto; padding:30px; background:#fff; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.1); }
 .form-container h2 { text-align:center; color:#1e40af; margin-bottom:20px; }
 form { display:flex; flex-direction:column; gap:16px; }

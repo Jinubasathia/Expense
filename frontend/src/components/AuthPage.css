@@ -1,34 +1,30 @@
-/* Split screen layout */
 .auth-page {
   display: flex;
   height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 0 200px;   /* space on left + right edges */
+  padding: 0 200px;  
   box-sizing: border-box;
 
-  /* Animated Bright Gradient Background */
   background: linear-gradient(-45deg, 
-    #ff6b6b,   /* bright red */
-    #feca57,   /* golden yellow */
-    #48dbfb,   /* sky blue */
-    #1dd1a1,   /* teal green */
-    #ff9ff3,   /* pink */
-    #54a0ff,   /* vivid blue */
-    #5f27cd,   /* deep purple */
-    #f368e0    /* neon magenta */
+    #ff6b6b,  
+    #feca57,   
+    #48dbfb,  
+    #1dd1a1,   
+    #ff9ff3,   
+    #54a0ff,   
+    #5f27cd,  
+    #f368e0    
   );
   background-size: 600% 600%;
   animation: gradientBG 15s ease infinite;
 }
 
-/* Background animation */
 @keyframes gradientBG {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Form side */
 .auth-box {
   flex: 0.6;                     
   max-width: 380px;              
@@ -41,12 +37,10 @@
   backdrop-filter: blur(6px);
 }
 
-/* Login: push slightly away from the image */
 .login-page .auth-box {
   margin-right: 60px;
 }
 
-/* Signup: push slightly away from the image */
 .signup-page .auth-box {
   margin-left: 60px;
 }
@@ -54,7 +48,7 @@
 .auth-box h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #0f172a; /* dark navy for contrast */
+  color: #0f172a; 
   font-size: 1.7rem;
   font-weight: 700;
 }
@@ -103,7 +97,6 @@ select:focus {
   font-size: 14px;
 }
 
-/* Switch link */
 .switch {
   text-align: center;
   margin-top: 16px;
@@ -118,7 +111,6 @@ select:focus {
   text-decoration: underline;
 }
 
-/* Image side */
 .auth-image {
   flex: 1.4;                     
   background-size: cover;
@@ -129,7 +121,6 @@ select:focus {
   transform: scale(1.05);
 }
 
-/* Different images for login/signup */
 .login-image {
   background-image: url("c:/Users/jinub/Downloads/family-budget-concept-couple-personal-600nw-2382116923-removebg-preview.png");
   background-repeat: no-repeat;
@@ -144,7 +135,6 @@ select:focus {
   background-size: contain;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }

@@ -1,4 +1,3 @@
-// src/main/java/com/example/expense/repository/ExpenseRepository.java
 package com.example.expense.repository;
 
 import com.example.expense.model.Expense;

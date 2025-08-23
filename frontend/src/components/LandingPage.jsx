@@ -1,4 +1,3 @@
-// src/components/LandingPage.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import "./LandingPage.css";
@@ -6,7 +5,7 @@ import "./LandingPage.css";
 const LandingPage = () => {
   return (
     <div className="landing-container">
-      {/* Floating Shapes */}
+      
       <div className="shape shape1"></div>
       <div className="shape shape2"></div>
       <div className="shape shape3"></div>
@@ -33,7 +32,7 @@ const LandingPage = () => {
         </main>
 
         <footer className="landing-footer">
-          &copy; {new Date().getFullYear()} Expense Manager. All rights reserved.
+          &copy; {new Date().getFullYear()} Expense Management Portal. All rights reserved.
         </footer>
       </div>
     </div>

@@ -1,4 +1,3 @@
-/* ===== General Page Styling ===== */
 body, html {
   margin: 0;
   padding: 0;
@@ -8,7 +7,6 @@ body, html {
   color: #1e293b;
 }
 
-/* ===== Landing Container ===== */
 .landing-container {
   min-height: 100vh;
   display: flex;
@@ -20,7 +18,6 @@ body, html {
   background-size: 400% 400%;
 }
 
-/* Gradient Animation */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   25% { background-position: 50% 50%; }
@@ -29,7 +26,6 @@ body, html {
   100% { background-position: 0% 50%; }
 }
 
-/* Floating Shapes */
 .shape {
   position: absolute;
   border-radius: 50%;
@@ -43,14 +39,12 @@ body, html {
 .shape4 { width: 200px; height: 200px; background: #93c5fd; bottom: 20%; left: 40%; animation: float4 28s linear infinite; }
 .shape5 { width: 180px; height: 180px; background: #0ea5e9; top: 30%; left: 20%; animation: float5 32s linear infinite; }
 
-/* Floating Animations */
 @keyframes float1 { 0% {transform: translate(0,0) rotate(0deg);} 50% {transform: translate(50px,-50px) rotate(180deg);} 100% {transform: translate(0,0) rotate(360deg);} }
 @keyframes float2 { 0% {transform: translate(0,0) rotate(0deg);} 50% {transform: translate(-30px,60px) rotate(180deg);} 100% {transform: translate(0,0) rotate(360deg);} }
 @keyframes float3 { 0% {transform: translate(0,0) rotate(0deg);} 50% {transform: translate(80px,-40px) rotate(180deg);} 100% {transform: translate(0,0) rotate(360deg);} }
 @keyframes float4 { 0% {transform: translate(0,0) rotate(0deg);} 50% {transform: translate(-60px,30px) rotate(180deg);} 100% {transform: translate(0,0) rotate(360deg);} }
 @keyframes float5 { 0% {transform: translate(0,0) rotate(0deg);} 50% {transform: translate(40px,-20px) rotate(180deg);} 100% {transform: translate(0,0) rotate(360deg);} }
 
-/* ===== Content Layer ===== */
 .landing-content {
   position: relative;
   z-index: 1;
@@ -59,7 +53,6 @@ body, html {
   flex-direction: column;
 }
 
-/* ===== Header ===== */
 .landing-header {
   display: flex;
   justify-content: space-between;
@@ -73,7 +66,6 @@ body, html {
   color: #1e293b;
 }
 
-/* ===== Header Buttons ===== */
 .landing-header .btn {
   margin-left: 15px;
   padding: 10px 20px;
@@ -102,7 +94,6 @@ body, html {
   transform: translateY(-2px); 
 }
 
-/* ===== Main Section ===== */
 .landing-main {
   flex: 1;
   display: flex;
@@ -140,7 +131,6 @@ body, html {
   padding: 14px 36px;
 }
 
-/* ===== Footer ===== */
 .landing-footer { 
   text-align: center; 
   padding: 20px; 
@@ -148,13 +138,11 @@ body, html {
   color: rgba(30,41,59,0.8); 
 }
 
-/* ===== Animations ===== */
 @keyframes fadeSlide { 
   0% { opacity: 0; transform: translateY(50px);} 
   100% { opacity: 1; transform: translateY(0);} 
 }
 
-/* ===== Responsive ===== */
 @media (max-width: 768px) {
   .intro h2 { font-size: 36px; }
   .intro p { font-size: 16px; }

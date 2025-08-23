@@ -34,18 +34,18 @@ public class UserService {
         return user;
     }
 
-    // ✅ Get user by ID
+    // Get user by ID
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
-    // ✅ Get all users
+    // Get all users
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // ✅ Get user by Email
+    // Get user by Email
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));

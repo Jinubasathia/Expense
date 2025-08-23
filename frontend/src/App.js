@@ -57,24 +57,21 @@ export default function App() {
       <Router>
         <Routes>
 
-          {/* Landing Page - default route */}
+        
           <Route path="/" element={<LandingPage />} />
 
-          {/* Public routes */}
+          
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 
-          {/* Protected routes with Header */}
           <Route element={<ProtectedRoute />}>
             <Route element={<ProtectedLayout />}>
 
-              {/* Employee */}
               <Route path="/dashboard" element={<EmployeeDashboard />} />
               <Route path="/expenses/new" element={<ExpenseForm />} />
               <Route path="/expenses/my" element={<ExpenseList reviewer={false} title="My Expenses" />} />
               <Route path="/expenses/reports" element={<ExpenseList reviewer={false} title="Expense Reports" />} />
 
-              {/* Admin */}
               <Route element={<RoleGuard allow={["ADMIN"]} />}>
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/expenses" element={<ExpenseList reviewer title="All Expenses (Admin)" />} />
@@ -83,7 +80,6 @@ export default function App() {
                 <Route path="/admin/categories" element={<ExpenseCategoriesPage />} />
               </Route>
 
-              {/* Manager */}
               <Route element={<RoleGuard allow={["MANAGER"]} />}>
                 <Route path="/manager/dashboard" element={<ManagerDashboard />} />
                 <Route path="/manager/expenses" element={<ExpenseList reviewer title="All Expenses (Manager)" />} />
@@ -92,7 +88,7 @@ export default function App() {
                 <Route path="/manager/team" element={<ExpenseList reviewer title="Team Expenses" />} />
               </Route>
 
-              {/* Finance */}
+              
               <Route element={<RoleGuard allow={["FINANCE"]} />}>
                 <Route path="/finance/dashboard" element={<FinanceDashboard />} />
                 <Route path="/finance/expenses" element={<ExpenseList reviewer title="All Expenses (Finance)" />} />
@@ -103,7 +99,7 @@ export default function App() {
             </Route>
           </Route>
 
-          {/* Catch-all */}
+          
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>

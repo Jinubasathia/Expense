@@ -1,4 +1,3 @@
-// src/components/ExpenseList.js
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../utils/api";
 import "./ExpenseList.css";

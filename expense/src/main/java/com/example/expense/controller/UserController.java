@@ -52,14 +52,14 @@ public class UserController {
         }
     }
 
-    // ✅ Get all users
+    //  Get all users
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
-    // ✅ Get user by id
+    //  Get user by id
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {

@@ -1,4 +1,4 @@
-/* ===== Shared Buttons ===== */
+
 .btn {
   padding: 12px 20px;
   border-radius: 12px;
@@ -10,7 +10,7 @@
   font-weight: 600;
   transition: 0.3s;
   display: inline-block;
-  margin: 4px 2px; /* spacing between buttons */
+  margin: 4px 2px; 
 }
 .btn:hover { background: #2563eb; }
 .btn.outline {
@@ -20,7 +20,7 @@
 }
 .btn.outline:hover { background: #3b82f6; color: #fff; }
 
-/* ===== Dashboard Wrapper ===== */
+
 .dashboard-container {
   display: flex;
   flex-direction: column;
@@ -31,7 +31,6 @@
   background: #f8fafc;
 }
 
-/* ===== Card Style ===== */
 .card {
   background: #fff;
   border-radius: 16px;
@@ -46,7 +45,7 @@
   box-shadow: 0 12px 36px rgba(0,0,0,0.12);
 }
 
-/* ===== Stats Grid ===== */
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -55,7 +54,7 @@
   justify-items: center;
 }
 
-/* ===== Stat Cards ===== */
+
 .stat-card {
   padding: 20px;
   border-radius: 12px;
@@ -63,7 +62,7 @@
   text-align: center;
   font-weight: 600;
   display: flex;
-  flex-direction: column; /* vertical layout */
+  flex-direction: column; 
   gap: 10px;
 }
 .stat-card h3 { font-size: 26px; margin-bottom: 8px; }
@@ -73,7 +72,7 @@
 .stat-card.rejected { border-top: 5px solid #ef4444; background: #fef2f2; color: #991b1b; }
 .stat-card.total { border-top: 5px solid #3b82f6; background: #eff6ff; color: #1e3a8a; }
 
-/* ===== Buttons Container for Approve/Reject ===== */
+
 .button-group {
   display: flex;
   gap: 10px;
@@ -82,7 +81,7 @@
   margin-top: 8px;
 }
 
-/* ===== Employee Options (Buttons/Cards) ===== */
+
 .employee-options {
   display: flex;
   flex-wrap: wrap;
@@ -112,7 +111,6 @@
   margin-bottom: 16px;
 }
 
-/* ===== Tables for Users, Departments, Categories ===== */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -130,7 +128,7 @@
 }
 .table tr:hover { background: #f9fafb; }
 
-/* ===== Lists for Departments / Categories ===== */
+
 ul {
   list-style: none;
   padding-left: 0;
@@ -144,13 +142,11 @@ ul li {
   font-weight: 500;
 }
 
-/* ===== Page Headings ===== */
 h2, h3 {
   color: #111827;
   text-align: center;
 }
 
-/* ===== Responsive Helpers ===== */
 @media (max-width: 700px) {
   .stats-grid { grid-template-columns: 1fr; }
   .card { padding: 20px; }
